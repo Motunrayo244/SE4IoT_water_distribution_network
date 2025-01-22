@@ -1,0 +1,269 @@
+[
+    {
+        "id": "9c47f89624e1aeb3",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3a50d421d6fa7b7a",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://influxdb:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "189351fd0205f3ad",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://influxdb:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "623fecb5a1b2fd6b",
+        "type": "telegram bot",
+        "botname": "h2o_iot_bot",
+        "usernames": "",
+        "chatids": "-4797952575",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": 300,
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": 6667,
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": 8443,
+        "publicbotport": 8443,
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "8fd6b6bab248e6c2",
+        "type": "inject",
+        "z": "9c47f89624e1aeb3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "ab782edac4b6f995"
+            ]
+        ]
+    },
+    {
+        "id": "ab782edac4b6f995",
+        "type": "function",
+        "z": "9c47f89624e1aeb3",
+        "name": "function 1",
+        "func": "// Helper function to generate random values\nfunction getRandomValue(min, max, decimals = 2) {\n    return parseFloat((Math.random() * (max - min) + min).toFixed(decimals));\n}\n\n// Generate sensor data for all 4 locations\nmsg.payload = [\n    // Main Storage Tank 1\n    [\n        {\n            orp: getRandomValue(0, 500),\n            ph: getRandomValue(6, 8.5),\n            salinity: getRandomValue(0, 600),\n            water_level: getRandomValue(1, 6), // Tanks only\n            turbidity: getRandomValue(0, 1),\n            temperature: getRandomValue(10, 30),\n            flow_rate: 0 // Tanks do not have flow rates\n        },\n        {\n            location_name: \"Main Storage Tank 1\",\n            latitude: \"42.3499\", // Tags should be strings\n            longitude: \"13.3995\",\n            type: \"Storage Tank\"\n        }\n    ],\n    // Secondary Storage Tank 2\n    [\n        {\n            orp: getRandomValue(0, 500),\n            ph: getRandomValue(6, 8.5),\n            salinity: getRandomValue(0, 600),\n            water_level: getRandomValue(1, 6), // Tanks only\n            turbidity: getRandomValue(0, 1),\n            temperature: getRandomValue(10, 30),\n            flow_rate: 0 // Tanks do not have flow rates\n        },\n        {\n            location_name: \"Secondary Storage Tank 2\",\n            latitude: \"42.3600\", // Tags should be strings\n            longitude: \"13.4100\",\n            type: \"Storage Tank\"\n        }\n    ],\n    // Primary Distribution Pipe 1\n    [\n        {\n            orp: getRandomValue(0, 500),\n            ph: getRandomValue(6, 8.5),\n            salinity: getRandomValue(0, 600),\n            water_level: 0, // Pipes do not have water level\n            turbidity: getRandomValue(0, 1),\n            temperature: getRandomValue(10, 30),\n            flow_rate: getRandomValue(0, 50) // Pipes only\n        },\n        {\n            location_name: \"Primary Distribution Pipe 1\",\n            latitude: \"42.3505\", // Tags should be strings\n            longitude: \"13.4050\",\n            type: \"Distribution Pipe\"\n        }\n    ],\n    // Secondary Distribution Pipe 2\n    [\n        {\n            orp: getRandomValue(0, 500),\n            ph: getRandomValue(6, 8.5),\n            salinity: getRandomValue(0, 600),\n            water_level: 0, // Pipes do not have water level\n            turbidity: getRandomValue(0, 1),\n            temperature: getRandomValue(10, 30),\n            flow_rate: getRandomValue(0, 50) // Pipes only\n        },\n        {\n            location_name: \"Secondary Distribution Pipe 2\",\n            latitude: \"42.3550\", // Tags should be strings\n            longitude: \"13.4200\",\n            type: \"Distribution Pipe\"\n        }\n    ]\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 240,
+        "wires": [
+            [
+                "a51ec6ba549711c9"
+            ]
+        ]
+    },
+    {
+        "id": "a51ec6ba549711c9",
+        "type": "influxdb out",
+        "z": "9c47f89624e1aeb3",
+        "influxdb": "3a50d421d6fa7b7a",
+        "name": "",
+        "measurement": "sensor_data",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "my-org",
+        "bucket": "sensor_data",
+        "x": 700,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "9dacac75497f1345",
+        "type": "inject",
+        "z": "9c47f89624e1aeb3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 440,
+        "wires": [
+            [
+                "aaeab7057db595f5"
+            ]
+        ]
+    },
+    {
+        "id": "aaeab7057db595f5",
+        "type": "influxdb in",
+        "z": "9c47f89624e1aeb3",
+        "influxdb": "189351fd0205f3ad",
+        "name": "",
+        "query": "from(bucket: \"sensor_data\")\n  |> range(start: -1h) // Adjust the time range\n  |> filter(fn: (r) => r._measurement == \"sensor_data\") // Filter by measurement\n  |> filter(fn: (r) => r._field == \"ph\") // Fetch only the \"ph\" field\n  |> group(columns: [\"location_name\", \"type\"]) // Group by unique locations\n  |> last() // Fetch the most recent value for each group\n",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "my-org",
+        "x": 390,
+        "y": 440,
+        "wires": [
+            [
+                "60f93f17967354c9",
+                "16516ca4457bd603"
+            ]
+        ]
+    },
+    {
+        "id": "60f93f17967354c9",
+        "type": "debug",
+        "z": "9c47f89624e1aeb3",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "16516ca4457bd603",
+        "type": "function",
+        "z": "9c47f89624e1aeb3",
+        "name": "function 2",
+        "func": "// Define acceptable thresholds\nconst thresholds = {\n    ph: { min: 6, max: 7.5 },\n    temperature: { min: 10, max: 30 }\n};\n\n// Store warnings\nconst warnings = [];\n\n// Check each row in the query result\nmsg.payload.forEach(data => {\n    if (data._value < thresholds.ph.min || data._value > thresholds.ph.max) {\n        warnings.push(`Warning: pH (${data._value}) at ${data.location_name} is outside the range 6–8.5.`);\n    }\n});\n\n// Send warnings if any\nif (warnings.length > 0) {\n    msg.payload = {\n        chatId: -4797952575,\n        type: \"message\",\n        content: warnings.join(\"\\n\")\n    }\n    return msg; // Pass the message to the next node\n}\n\n// If no warnings, stop the flow\nreturn null;\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 580,
+        "wires": [
+            [
+                "aa56ad5bcfcffd94"
+            ]
+        ]
+    },
+    {
+        "id": "aa56ad5bcfcffd94",
+        "type": "telegram sender",
+        "z": "9c47f89624e1aeb3",
+        "name": "bot",
+        "bot": "623fecb5a1b2fd6b",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 690,
+        "y": 580,
+        "wires": [
+            [
+                "696177bbc898f126",
+                "9e1f153b2705e843"
+            ]
+        ]
+    },
+    {
+        "id": "696177bbc898f126",
+        "type": "debug",
+        "z": "9c47f89624e1aeb3",
+        "name": "success",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "9e1f153b2705e843",
+        "type": "debug",
+        "z": "9c47f89624e1aeb3",
+        "name": "error",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 640,
+        "wires": []
+    }
+]

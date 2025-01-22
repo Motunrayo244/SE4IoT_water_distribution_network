@@ -1,0 +1,92 @@
+[
+    {
+        "id": "9c47f89624e1aeb3",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3a50d421d6fa7b7a",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://influxdb:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "8fd6b6bab248e6c2",
+        "type": "inject",
+        "z": "9c47f89624e1aeb3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "ab782edac4b6f995"
+            ]
+        ]
+    },
+    {
+        "id": "ab782edac4b6f995",
+        "type": "function",
+        "z": "9c47f89624e1aeb3",
+        "name": "function 1",
+        "func": "// Helper function to generate random values\nfunction getRandomValue(min, max, decimals = 2) {\n    return parseFloat((Math.random() * (max - min) + min).toFixed(decimals));\n}\n\n// Generate sensor data for all 4 locations\nmsg.payload = [\n    // Main Storage Tank 1\n    [\n        {\n            orp: getRandomValue(0, 500),\n            ph: getRandomValue(6, 8.5),\n            salinity: getRandomValue(0, 600),\n            water_level: getRandomValue(1, 6), // Tanks only\n            turbidity: getRandomValue(0, 1),\n            temperature: getRandomValue(10, 30),\n            flow_rate: 0 // Tanks do not have flow rates\n        },\n        {\n            location_name: \"Main Storage Tank 1\",\n            latitude: \"42.3499\", // Tags should be strings\n            longitude: \"13.3995\",\n            type: \"Storage Tank\"\n        }\n    ],\n    // Secondary Storage Tank 2\n    [\n        {\n            orp: getRandomValue(0, 500),\n            ph: getRandomValue(6, 8.5),\n            salinity: getRandomValue(0, 600),\n            water_level: getRandomValue(1, 6), // Tanks only\n            turbidity: getRandomValue(0, 1),\n            temperature: getRandomValue(10, 30),\n            flow_rate: 0 // Tanks do not have flow rates\n        },\n        {\n            location_name: \"Secondary Storage Tank 2\",\n            latitude: \"42.3600\", // Tags should be strings\n            longitude: \"13.4100\",\n            type: \"Storage Tank\"\n        }\n    ],\n    // Primary Distribution Pipe 1\n    [\n        {\n            orp: getRandomValue(0, 500),\n            ph: getRandomValue(6, 8.5),\n            salinity: getRandomValue(0, 600),\n            water_level: 0, // Pipes do not have water level\n            turbidity: getRandomValue(0, 1),\n            temperature: getRandomValue(10, 30),\n            flow_rate: getRandomValue(0, 50) // Pipes only\n        },\n        {\n            location_name: \"Primary Distribution Pipe 1\",\n            latitude: \"42.3505\", // Tags should be strings\n            longitude: \"13.4050\",\n            type: \"Distribution Pipe\"\n        }\n    ],\n    // Secondary Distribution Pipe 2\n    [\n        {\n            orp: getRandomValue(0, 500),\n            ph: getRandomValue(6, 8.5),\n            salinity: getRandomValue(0, 600),\n            water_level: 0, // Pipes do not have water level\n            turbidity: getRandomValue(0, 1),\n            temperature: getRandomValue(10, 30),\n            flow_rate: getRandomValue(0, 50) // Pipes only\n        },\n        {\n            location_name: \"Secondary Distribution Pipe 2\",\n            latitude: \"42.3550\", // Tags should be strings\n            longitude: \"13.4200\",\n            type: \"Distribution Pipe\"\n        }\n    ]\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 240,
+        "wires": [
+            [
+                "a51ec6ba549711c9"
+            ]
+        ]
+    },
+    {
+        "id": "a51ec6ba549711c9",
+        "type": "influxdb out",
+        "z": "9c47f89624e1aeb3",
+        "influxdb": "3a50d421d6fa7b7a",
+        "name": "",
+        "measurement": "sensor_data",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "my-org",
+        "bucket": "sensor_data",
+        "x": 700,
+        "y": 240,
+        "wires": []
+    }
+]
