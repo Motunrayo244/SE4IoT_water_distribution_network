@@ -29,7 +29,7 @@ class Tank:
 
     def __init__(self, name:str ,longitude:float, latitude: float):
         self.name = name
-        self.londitude = longitude
+        self.longitude = longitude
         self.latitude = latitude
         self.sensors_previous_value = self.get_sensors_initial_values()
         self.sensors_current_value = self.get_sensors_initial_values()
@@ -194,5 +194,7 @@ class Tank:
         self.manage_flow_rate()
 
         data = self.sensors_current_value.copy()
+        data['longitude'] = self.longitude
+        data['latitude'] = self.latitude
         data["timestamp"] = time.time()
         return data

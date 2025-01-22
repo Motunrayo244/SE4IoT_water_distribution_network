@@ -9,11 +9,14 @@ class Pipeline:
 
     def __init__(self, name, longitude, latitude):
         self.name = name
+        self.longitude = longitude
+        self.latitude = latitude
         self.sensors = {
             "PH": (6, 8.5),
             "Salinity": (0, 600),
             "Flow": Pipeline.RateGroup.MEDIUM
         }
+        
 
     def generate_data(self, tank_data):
         """Generate random sensor data for the pipeline."""
@@ -38,6 +41,8 @@ class Pipeline:
             "Salinity": round(tank_data["Salinity"] + salinity_difference, 2),
             "Flow": flow_rate
         }
+        data['longitude'] = self.longitude
+        data['latitude'] = self.latitude
 
         data["timestamp"] = time.time()
         return data
