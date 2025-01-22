@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuration Editor</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <style>
+    #map {
+      height: 400px;
+      margin-bottom: 10px;
+    }
+    .form-container {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Configuration Editor</h1>
+
+    <label for="areaSelect">Select Area:</label>
+    <select id="areaSelect">
+      <option value="">-- Select an Area --</option>
+    </select>
+    <input type="text" id="newArea" placeholder="Enter new area name (if none exists)" style="display:none;"><br><br>
+
+    <label for="tankSelect">Select Tank:</label>
+    <select id="tankSelect">
+      <option value="">-- Select a Tank --</option>
+    </select>
+    <input type="text" id="newTank" placeholder="Enter new tank name"><br><br>
+
+    <label for="pipelineSelect">Select Pipeline:</label>
+    <select id="pipelineSelect">
+      <option value="">-- Select a Pipeline --</option>
+    </select>
+    <input type="text" id="newPipeline" placeholder="Enter new pipeline name"><br><br>
+
+    <label for="location">Location:</label><br>
+    Longitude: <input type="text" id="longitude" readonly>
+    Latitude: <input type="text" id="latitude" readonly><br><br>
+
+    <button type="button" id="addCoordinate">Add Coordinate</button>
+    <button type="button" id="addPipeline">Add Pipeline</button>
+    <button type="button" id="saveJson">Save Configuration</button>
+  </div>
+
+  <div id="map"></div>
+
+  <pre id="jsonOutput"></pre>
+
+  <script>
+    const map = L.map('map').setView([42.3499, 13.3995], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    let config = { areas: [] };
+
+    async function loadConfiguration() {
+      try {
+        const response = await fetch('configuration.json');
+        if (response.ok) {
+          config = await response.json();
+          populateAreas();
+        } else {
+          console.warn('Configuration file not found, initializing new configuration.');
+          document.getElementById('newArea').style.display = 'inline';
+        }
+      } catch (error) {
+        console.error('Error loading configuration:', error);
+        document.getElementById('newArea').style.display = 'inline';
+      }
+    }
+
+    function populateAreas() {
+      const areaSelect = document.getElementById('areaSelect');
+      config.areas.forEach(area => {
+        const option = document.createElement('option');
+        option.value = area.name;
+        option.textContent = area.name;
+        areaSelect.appendChild(option);
+      });
+
+      if (config.areas.length === 0) {
+        document.getElementById('newArea').style.display = 'inline';
+      }
+    }
+
+    document.getElementById('areaSelect').addEventListener('change', (event) => {
+      const selectedArea = event.target.value;
+      populateTanks(selectedArea);
+    });
+
+    function populateTanks(areaName) {
+      const tankSelect = document.getElementById('tankSelect');
+      tankSelect.innerHTML = '<option value="">-- Select a Tank --</option>';
+
+      const pipelineSelect = document.getElementById('pipelineSelect');
+      pipelineSelect.innerHTML = '<option value="">-- Select a Pipeline --</option>';
+
+      if (areaName) {
+        const area = config.areas.find(a => a.name === areaName);
+        if (area) {
+          area.tanks.forEach(tank => {
+            const option = document.createElement('option');
+            option.value = tank.name;
+            option.textContent = tank.name;
+            tankSelect.appendChild(option);
+          });
+        }
+      }
+    }
+
+    document.getElementById('tankSelect').addEventListener('change', (event) => {
+      const selectedTank = event.target.value;
+      const selectedArea = document.getElementById('areaSelect').value;
+      populatePipelines(selectedArea, selectedTank);
+    });
+
+    function populatePipelines(areaName, tankName) {
+      const pipelineSelect = document.getElementById('pipelineSelect');
+      pipelineSelect.innerHTML = '<option value="">-- Select a Pipeline --</option>';
+
+      if (areaName && tankName) {
+        const area = config.areas.find(a => a.name === areaName);
+        const tank = area?.tanks.find(t => t.name === tankName);
+        if (tank) {
+          tank.pipelines.forEach(pipeline => {
+            const option = document.createElement('option');
+            option.value = pipeline.name;
+            option.textContent = pipeline.name;
+            pipelineSelect.appendChild(option);
+          });
+        }
+      }
+    }
+
+    map.on('click', (e) => {
+      const { lat, lng } = e.latlng;
+      document.getElementById('longitude').value = lng.toFixed(6);
+      document.getElementById('latitude').value = lat.toFixed(6);
+    });
+
+    document.getElementById('addCoordinate').addEventListener('click', () => {
+      const areaName = document.getElementById('areaSelect').value || document.getElementById('newArea').value.trim();
+      const tankName = document.getElementById('tankSelect').value || document.getElementById('newTank').value.trim();
+      const longitude = parseFloat(document.getElementById('longitude').value);
+      const latitude = parseFloat(document.getElementById('latitude').value);
+
+      if (!areaName || !tankName || isNaN(longitude) || isNaN(latitude)) {
+        alert('Please fill out all fields and select a location on the map.');
+        return;
+      }
+
+      let area = config.areas.find(a => a.name === areaName);
+      if (!area) {
+        area = { name: areaName, tanks: [] };
+        config.areas.push(area);
+        populateAreas();
+      }
+
+      let tank = area.tanks.find(t => t.name === tankName);
+      if (!tank) {
+        tank = { name: tankName, longitude, latitude, pipelines: [] };
+        area.tanks.push(tank);
+      } else {
+        tank.longitude = longitude;
+        tank.latitude = latitude;
+      }
+
+      document.getElementById('jsonOutput').textContent = JSON.stringify(config, null, 2);
+    });
+
+    document.getElementById('addPipeline').addEventListener('click', () => {
+      const areaName = document.getElementById('areaSelect').value;
+      const tankName = document.getElementById('tankSelect').value;
+      const pipelineName = document.getElementById('newPipeline').value.trim();
+      const longitude = parseFloat(document.getElementById('longitude').value);
+      const latitude = parseFloat(document.getElementById('latitude').value);
+
+      if (!areaName || !tankName || !pipelineName || isNaN(longitude) || isNaN(latitude)) {
+        alert('Please fill out all fields and select a location on the map.');
+        return;
+      }
+
+      const area = config.areas.find(a => a.name === areaName);
+      const tank = area?.tanks.find(t => t.name === tankName);
+
+      if (tank) {
+        tank.pipelines.push({ name: pipelineName, longitude, latitude });
+      }
+
+      document.getElementById('jsonOutput').textContent = JSON.stringify(config, null, 2);
+    });
+
+    document.getElementById('saveJson').addEventListener('click', () => {
+      const jsonString = JSON.stringify(config, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'configuration.json';
+      link.click();
+    });
+
+    loadConfiguration();
+  </script>
+</body>
+</html>

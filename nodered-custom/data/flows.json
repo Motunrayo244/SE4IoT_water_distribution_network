@@ -1,0 +1,169 @@
+[
+    {
+        "id": "67335a4ea77805fd",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b38536e69747293f",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "waterdistribution-mosquitto",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "82988a6677f7bf06",
+        "type": "influxdb",
+        "hostname": "waterdistribution-influxdb",
+        "port": 8086,
+        "protocol": "http",
+        "database": "waterdistribution",
+        "name": "waterdistribution-influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://waterdistribution-influxdb:8086",
+        "timeout": 10,
+        "rejectUnauthorized": false
+    },
+    {
+        "id": "b5c9a52428a4daa8",
+        "type": "mqtt in",
+        "z": "67335a4ea77805fd",
+        "name": "",
+        "topic": "water_quality/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "b38536e69747293f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 120,
+        "wires": [
+            [
+                "b344701fed485d80",
+                "482823acbf256b63"
+            ]
+        ]
+    },
+    {
+        "id": "85dfadcc2a4aec5c",
+        "type": "debug",
+        "z": "67335a4ea77805fd",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "b344701fed485d80",
+        "type": "function",
+        "z": "67335a4ea77805fd",
+        "name": "parse_pipeline_to_influx_format",
+        "func": "let payload = msg.payload; // Incoming MQTT payload\nlet topic = msg.topic;     // MQTT topic (e.g., water_quality/L'Aquila Distribution Zone/Main Tank)\n\n// Parse topic hierarchy\nlet parts = topic.split('/');\nlet zone = parts[1];        // Extract the zone\nlet device = parts[2];      // Extract the device (e.g., \"Main Tank\" or \"Secondary Tank\")\nlet isPipeline = parts.length === 4; // Check if it's a pipeline\n\nif (isPipeline) {\n    return null; // Ignore pipeline data\n}\n\n// Convert timestamp to nanoseconds (InfluxDB default)\nlet timestamp = payload.timestamp ? payload.timestamp * 1e9 : Date.now() * 1e6; // Use current time if missing\n\n// Construct the payload\nmsg.measurement=isPipeline ? \"pipelines\" : \"tanks\"\nmsg.payload = {\n            measurement: isPipeline ? \"pipelines\" : \"tanks\",\n            zone: zone,\n            device: device,\n            type: \"tank\",\n            ORP: payload.ORP,\n            PH: payload.PH,\n            Salinity: payload.Salinity,\n            Water_Depth: payload.Water_Depth,\n            Turbidity: payload.Turbidity,\n            Temperature: payload.Temperature,\n            timestamp: timestamp\n    \n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 60,
+        "wires": [
+            [
+                "9a9f9873ee494c41"
+            ]
+        ]
+    },
+    {
+        "id": "84979693b058b4d3",
+        "type": "debug",
+        "z": "67335a4ea77805fd",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 390,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "9a9f9873ee494c41",
+        "type": "influxdb out",
+        "z": "67335a4ea77805fd",
+        "influxdb": "82988a6677f7bf06",
+        "name": "",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "univaq",
+        "bucket": "waterdistribution",
+        "x": 1050,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "482823acbf256b63",
+        "type": "function",
+        "z": "67335a4ea77805fd",
+        "name": "parse_pipeline_to_influx_format",
+        "func": "let payload = msg.payload; // Incoming MQTT payload\nlet topic = msg.topic;     // MQTT topic (e.g., water_quality/L'Aquila Distribution Zone/Main Tank)\n\n// Parse topic hierarchy\nlet parts = topic.split('/');\nlet zone = parts[1];        // Extract the zone\nlet device = parts[2];      // Extract the device (e.g., \"Main Tank\" or \"Secondary Tank\")\nlet isPipeline = parts.length === 4; // Check if it's a pipeline\n\nif (!isPipeline) {\n    return null; // Ignore pipeline data\n}\n\n// Convert timestamp to nanoseconds (InfluxDB default)\nlet timestamp = payload.timestamp ? payload.timestamp * 1e9 : Date.now() * 1e6; // Use current time if missing\n\n// Construct the payload\nmsg.measurement=isPipeline ? \"pipelines\" : \"tanks\"\nmsg.payload = {\n            measurement: isPipeline ? \"pipelines\" : \"tanks\",\n            zone: zone,\n            device: device,\n            type: \"pipelines\",\n            pipeline: parts[3],\n            PH: payload.PH,\n            Salinity: payload.Salinity,\n            Flow: payload.Flow,\n            timestamp: timestamp\n    \n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 180,
+        "wires": [
+            [
+                "85dfadcc2a4aec5c",
+                "9a9f9873ee494c41"
+            ]
+        ]
+    }
+]

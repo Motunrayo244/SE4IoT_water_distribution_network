@@ -1,0 +1,18 @@
+# Dockerfile for Sensors Service
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /sensors
+
+# Copy the Sensors directory
+COPY . /sensors
+
+# Install necessary dependencies
+RUN pip install paho-mqtt
+
+
+# Expose the default MQTT port if needed
+EXPOSE 1883
+
+# Entry point for the simulation
+CMD ["python", "sensors.py", "--config_file", "./configuration.json"]

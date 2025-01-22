@@ -1,0 +1,106 @@
+services:
+
+  # Node-RED
+  node-red:
+    container_name: waterdistribution-node-red
+    build:
+      context: ./nodered-custom/
+      dockerfile: Dockerfile
+    image: custom_nodered:latest
+    environment:
+      - TZ=Europe/Amsterdam
+      - MYSQLUSERNAME=root
+      - MYSQLPASSWORD=water1234!
+    ports:
+      - "1880:1880"
+    networks:
+      waterdistribution-network:
+        ipv4_address: 172.30.0.100
+    volumes:
+      - ./nodered-custom/data:/data
+    depends_on:
+      - influxdb
+
+  # MQTT Broker
+  mosquitto:
+    container_name: waterdistribution-mosquitto
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto/data:/mosquitto/data
+    restart: always
+    networks:
+      waterdistribution-network:
+        ipv4_address: 172.30.0.101
+    ports:
+      - "1883:1883"
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-h", "127.0.0.1", "-t", "test"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # InfluxDB
+  influxdb:
+    container_name: waterdistribution-influxdb
+    image: influxdb:2.7.4
+    ports:
+      - "8086:8086"
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influxdb-admin-username
+      DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influxdb-admin-password
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influxdb-admin-token
+      DOCKER_INFLUXDB_INIT_ORG: univaq
+      DOCKER_INFLUXDB_INIT_BUCKET: waterdistribution
+      DOCKER_INFLUXDB_INIT_RETENTION: 1w
+    secrets:
+      - influxdb-admin-username
+      - influxdb-admin-password
+      - influxdb-admin-token
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb2
+      - ./influxdb/config:/etc/influxdb2
+    networks:
+      waterdistribution-network:
+        ipv4_address: 172.30.0.104
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Sensors
+  sensors:
+    container_name: waterdistribution-sensors
+    build:
+      context: ./Sensors
+      dockerfile: Dockerfile
+    image: waterdistribution-sensors:latest
+    environment:
+      - MQTT_BROKER=waterdistribution-mosquitto
+    networks:
+      waterdistribution-network:
+        ipv4_address: 172.30.0.102
+    volumes:
+      - ./Sensors:/sensors
+
+secrets:
+  influxdb-admin-username:
+    file: ./secrets/influxdb-admin-username
+  influxdb-admin-password:
+    file: ./secrets/influxdb-admin-password
+  influxdb-admin-token:
+    file: ./secrets/influxdb-admin-token
+
+volumes:
+  influxdb-data:
+  influxdb-config:
+
+networks:
+  waterdistribution-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
