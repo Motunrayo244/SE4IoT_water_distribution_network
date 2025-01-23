@@ -71,8 +71,7 @@
         "wires": [
             [
                 "b344701fed485d80",
-                "482823acbf256b63",
-                "84979693b058b4d3"
+                "482823acbf256b63"
             ]
         ]
     },
@@ -97,7 +96,7 @@
         "type": "function",
         "z": "67335a4ea77805fd",
         "name": "parse_pipeline_to_influx_format",
-        "func": "let payload = msg.payload; // Incoming MQTT payload\nlet topic = msg.topic;     // MQTT topic (e.g., water_quality/L'Aquila Distribution Zone/Main Tank)\n\n// Parse topic hierarchy\nlet parts = topic.split('/');\nlet zone = parts[1];        // Extract the zone\nlet device = parts[2];      // Extract the device (e.g., \"Main Tank\" or \"Secondary Tank\")\nlet isPipeline = parts.length === 4; // Check if it's a pipeline\n\nif (isPipeline) {\n    return null; // Ignore pipeline data\n}\n\n// Convert timestamp to nanoseconds (InfluxDB default)\nlet timestamp = payload.timestamp ? payload.timestamp * 1e9 : Date.now() * 1e6; // Use current time if missing\n\n// Construct the payload\nmsg.measurement=isPipeline ? \"pipelines\" : \"tanks\"\nmsg.payload = [{\n        ORP: payload.ORP,\n        pH: payload.PH,\n        Salinity: payload.Salinity,\n        Water_Depth: payload.Water_Depth,\n        Turbidity: payload.Turbidity,\n        Temperature: payload.Temperature,\n        time: timestamp / 1000000 //Converting to seconds\n    },{\n        measurement: isPipeline ? \"pipelines\" : \"tanks\",\n        zone: zone,\n        device: device,\n        type: \"tank\",\n    }];\n\nreturn msg;\n",
+        "func": "let payload = msg.payload; // Incoming MQTT payload\nlet topic = msg.topic;     // MQTT topic (e.g., water_quality/L'Aquila Distribution Zone/Main Tank)\n\n// Parse topic hierarchy\nlet parts = topic.split('/');\nlet zone = parts[1];        // Extract the zone\nlet device = parts[2];      // Extract the device (e.g., \"Main Tank\" or \"Secondary Tank\")\nlet isPipeline = parts.length === 4; // Check if it's a pipeline\n\nif (isPipeline) {\n    return null; // Ignore pipeline data\n}\n\n// Convert timestamp to nanoseconds (InfluxDB default)\nlet timestamp = payload.timestamp ? payload.timestamp * 1e9 : Date.now() * 1e6; // Use current time if missing\n\n// Construct the payload\nmsg.measurement=isPipeline ? \"pipelines\" : \"tanks\"\nmsg.payload = [{\n        ORP: payload.ORP,\n        pH: payload.PH,\n        Salinity: payload.Salinity,\n        Water_Depth: payload.Water_Depth,\n        Turbidity: payload.Turbidity,\n        Temperature: payload.Temperature,\n        latitude: payload.latitude,\n        longitude: payload.longitude,\n        time: timestamp / 1000000 //Converting to miliseconds\n    },{\n        measurement: isPipeline ? \"pipelines\" : \"tanks\",\n        zone: zone,\n        tank: device,\n        device: device,\n        type: \"tank\",\n    }];\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -108,7 +107,8 @@
         "y": 160,
         "wires": [
             [
-                "9a9f9873ee494c41"
+                "9a9f9873ee494c41",
+                "85dfadcc2a4aec5c"
             ]
         ]
     },
@@ -151,7 +151,7 @@
         "type": "function",
         "z": "67335a4ea77805fd",
         "name": "parse_pipeline_to_influx_format",
-        "func": "let payload = msg.payload; // Incoming MQTT payload\nlet topic = msg.topic;     // MQTT topic (e.g., water_quality/L'Aquila Distribution Zone/Main Tank)\n\n// Parse topic hierarchy\nlet parts = topic.split('/');\nlet zone = parts[1];        // Extract the zone\nlet device = parts[2];      // Extract the device (e.g., \"Main Tank\" or \"Secondary Tank\")\nlet isPipeline = parts.length === 4; // Check if it's a pipeline\n\nif (!isPipeline) {\n    return null; // Ignore pipeline data\n}\n\n// Convert timestamp to nanoseconds (InfluxDB default)\nlet timestamp = payload.timestamp ? payload.timestamp * 1e9 : Date.now() * 1e6; // Use current time if missing\n\n// Construct the payload\nmsg.measurement=isPipeline ? \"pipelines\" : \"tanks\"\nmsg.payload = [{\n            pipeline: parts[3],\n            PH: payload.PH,\n            Salinity: payload.Salinity,\n            Flow: payload.Flow,\n            time: timestamp / 1000000 //Converting to seconds\n            },{\n            measurement: isPipeline ? \"pipelines\" : \"tanks\",\n            zone: zone,\n            device: device,\n            type: \"pipelines\"\n        }];\n\nreturn msg;\n",
+        "func": "let payload = msg.payload; // Incoming MQTT payload\nlet topic = msg.topic;     // MQTT topic (e.g., water_quality/L'Aquila Distribution Zone/Main Tank)\n\n// Parse topic hierarchy\nlet parts = topic.split('/');\nlet zone = parts[1];        // Extract the zone\nlet tank = parts[2]; \nlet device = parts[3];      // Extract the device (e.g., \"Main Tank\" or \"Secondary Tank\")\nlet isPipeline = parts.length === 4; // Check if it's a pipeline\n\nif (!isPipeline) {\n    return null; // Ignore pipeline data\n}\n\n// Convert timestamp to nanoseconds (InfluxDB default)\nlet timestamp = payload.timestamp ? payload.timestamp * 1e9 : Date.now() * 1e6; // Use current time if missing\n\n// Construct the payload\nmsg.measurement=isPipeline ? \"pipelines\" : \"tanks\"\nmsg.payload = [{\n            pipeline: parts[3],\n            PH: payload.PH,\n            Salinity: payload.Salinity,\n            Flow: payload.Flow,\n            latitude: payload.latitude,\n            longitude: payload.longitude,\n            time: timestamp / 1000000 //Converting to miliseconds\n            },{\n            measurement: isPipeline ? \"pipelines\" : \"tanks\",\n            zone: zone,\n            tank: tank,\n            device: device,\n            type: \"pipelines\",\n        }];\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -162,7 +162,6 @@
         "y": 280,
         "wires": [
             [
-                "85dfadcc2a4aec5c",
                 "9a9f9873ee494c41"
             ]
         ]
