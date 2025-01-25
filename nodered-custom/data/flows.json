@@ -45,13 +45,39 @@
         "port": 8086,
         "protocol": "http",
         "database": "waterdistribution",
-        "name": "waterdistribution-influxdb",
+        "name": "waterdistribution-influxdb-query",
         "usetls": false,
         "tls": "",
         "influxdbVersion": "2.0",
         "url": "http://waterdistribution-influxdb:8086",
         "timeout": 10,
         "rejectUnauthorized": false
+    },
+    {
+        "id": "dbeaba3224e27de2",
+        "type": "telegram bot",
+        "botname": "h2o_iot_bot",
+        "usernames": "",
+        "chatids": "-4797952575",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": 300,
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": 6667,
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": 8443,
+        "publicbotport": 8443,
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
     },
     {
         "id": "b5c9a52428a4daa8",
@@ -142,7 +168,7 @@
         "retentionPolicyV18Flux": "",
         "org": "univaq",
         "bucket": "waterdistribution",
-        "x": 1050,
+        "x": 1070,
         "y": 140,
         "wires": []
     },
@@ -163,6 +189,241 @@
         "wires": [
             [
                 "9a9f9873ee494c41"
+            ]
+        ]
+    },
+    {
+        "id": "7888cf5f3405f3bd",
+        "type": "file in",
+        "z": "67335a4ea77805fd",
+        "name": "",
+        "filename": "/shared-data/thresholds.json",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 560,
+        "y": 600,
+        "wires": [
+            [
+                "94d8eecd4efb2f70"
+            ]
+        ]
+    },
+    {
+        "id": "e7c60baa010b0bbc",
+        "type": "inject",
+        "z": "67335a4ea77805fd",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 330,
+        "y": 600,
+        "wires": [
+            [
+                "7888cf5f3405f3bd"
+            ]
+        ]
+    },
+    {
+        "id": "74cf5231744abad8",
+        "type": "debug",
+        "z": "67335a4ea77805fd",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1180,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "d6705ecab89ea793",
+        "type": "function",
+        "z": "67335a4ea77805fd",
+        "name": "set_threshold_values",
+        "func": "// Store the parsed JSON in global context\nglobal.set(\"thresholds\", msg.payload);\n\n// Pass the message through for debugging or further use\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "94d8eecd4efb2f70",
+        "type": "json",
+        "z": "67335a4ea77805fd",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 770,
+        "y": 600,
+        "wires": [
+            [
+                "d6705ecab89ea793",
+                "4389aec77831501e",
+                "74cf5231744abad8"
+            ]
+        ]
+    },
+    {
+        "id": "8d7c63aacb69257f",
+        "type": "inject",
+        "z": "67335a4ea77805fd",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 330,
+        "y": 680,
+        "wires": [
+            [
+                "a98d06ee3ab31699"
+            ]
+        ]
+    },
+    {
+        "id": "a98d06ee3ab31699",
+        "type": "influxdb in",
+        "z": "67335a4ea77805fd",
+        "influxdb": "82988a6677f7bf06",
+        "name": "",
+        "query": "import \"influxdata/influxdb/schema\"\n\nfrom(bucket: \"waterdistribution\")\n  |> range(start: -1h, stop: now()) // Replace with your desired time range\n  |> filter(fn: (r) => r._field == \"pH\" or r._field == \"Salinity\" or r._field == \"ORP\" or r._field == \"Flow\" or r._field == \"Temperature\" or r._field == \"Water_Depth\" or r._field == \"Turbidity\")\n  |> schema.fieldsAsCols()\n  |> group(columns: [\"device\", \"type\", \"zone\", \"tank\"]) // Group by your tags\n  |> sort(columns: [\"_time\"], desc: true)\n  |> limit(n: 1) // Get the most recent row for each group\n  |> group() // Combine all results into a single table\n",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "univaq",
+        "x": 610,
+        "y": 680,
+        "wires": [
+            [
+                "bd8c670022eb123f"
+            ]
+        ]
+    },
+    {
+        "id": "bd8c670022eb123f",
+        "type": "function",
+        "z": "67335a4ea77805fd",
+        "name": "format_telegram",
+        "func": "// Get thresholds from global context\nconst thresholds = global.get(\"thresholds\");\nconst alerts = [];\n\n// Check if thresholds exist\nif (!thresholds) {\n    node.error(\"Thresholds not loaded in global context!\");\n    return msg;\n}\n\nconst fields = Object.keys(thresholds);\n\n// Loop through the sensor data from InfluxDB\nmsg.payload.forEach((data) => {\n\n    fields.forEach(field => {\n\n        if (data[field]) { //Check if field exists in the data\n            \n            const { alert_low, alert_high } = thresholds[field];\n            let value = data[field];\n            let device = data[\"device\"];\n\n            // Compare value with thresholds\n            if (value < alert_low) {\n                alerts.push(`🚨 ${device} (${field}): Too Low (${value})`);\n            } else if (value > alert_high) {\n                alerts.push(`🚨 ${device} (${field}): Too High (${value})`);\n            }\n        }\n    });\n});\n\n// Send warnings if any\nif (alerts.length > 0) {\n    msg.payload = {\n        chatId: -4797952575,\n        type: \"message\",\n        content: alerts.join(\"\\n\")\n    }\n    return msg; // Pass the message to the next node\n}\n\n// If no warnings, stop the flow\nreturn null;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5fb77ac341b56bfc",
+        "type": "telegram sender",
+        "z": "67335a4ea77805fd",
+        "name": "",
+        "bot": "dbeaba3224e27de2",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1140,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1293fd382e0fb26f",
+        "type": "debug",
+        "z": "67335a4ea77805fd",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1080,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "d568e504d3ea4d65",
+        "type": "influxdb out",
+        "z": "67335a4ea77805fd",
+        "influxdb": "82988a6677f7bf06",
+        "name": "",
+        "measurement": "threshold",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "univaq",
+        "bucket": "waterdistribution",
+        "x": 1300,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "4389aec77831501e",
+        "type": "function",
+        "z": "67335a4ea77805fd",
+        "name": "write_thresholds_db",
+        "func": "const data = msg.payload; // Input JSON\nconst points = [];\n\nfor (const metric in data) {\n    const thresholds = data[metric];\n    points.push([\n        { \n            alert_low: thresholds.alert_low, \n            alert_high: thresholds.alert_high \n        },\n        { metric }        // Tag (e.g., Flow, pH)\n    ]);\n}\n\nmsg.payload = points; // Output data points for InfluxDB\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960,
+        "y": 520,
+        "wires": [
+            [
+                "d568e504d3ea4d65"
             ]
         ]
     }

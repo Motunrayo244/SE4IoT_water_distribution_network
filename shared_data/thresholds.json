@@ -1,0 +1,31 @@
+{
+    "Flow": {
+      "alert_low": 6.5,
+      "alert_high": 7.5
+    },
+    "Salinity": {
+      "alert_low": 0,
+      "alert_high": 40
+    },
+    "pH": {
+      "alert_low": 6,
+      "alert_high": 8.5
+    },
+    "ORP": {
+      "alert_low": 500,
+      "alert_high": 900
+    },
+    "Water_Depth": {
+      "alert_low": 0.5,
+      "alert_high": 3
+    },
+    "Turbidity": {
+      "alert_low": 0,
+      "alert_high": 0.25
+    },
+    "Temperature": {
+      "alert_low": 1,
+      "alert_high": 30
+    }
+  }
+  

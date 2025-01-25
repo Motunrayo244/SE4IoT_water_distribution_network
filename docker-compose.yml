@@ -18,6 +18,7 @@ services:
         ipv4_address: 172.30.0.100
     volumes:
       - ./nodered-custom/data:/data
+      - ./shared_data:/shared-data
     depends_on:
       - influxdb
 
@@ -98,6 +99,7 @@ services:
       - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clock-panel
     volumes:
       - ./grafana/data:/var/lib/grafana
+      - ./shared_data:/shared-data
     networks:
       waterdistribution-network:
         ipv4_address: 172.30.0.103
@@ -127,6 +129,7 @@ secrets:
 volumes:
   influxdb-data:
   influxdb-config:
+  grafana-data:
 
 networks:
   waterdistribution-network:
