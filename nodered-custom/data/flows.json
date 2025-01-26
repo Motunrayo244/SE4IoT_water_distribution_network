@@ -139,22 +139,6 @@
         ]
     },
     {
-        "id": "84979693b058b4d3",
-        "type": "debug",
-        "z": "67335a4ea77805fd",
-        "name": "debug 2",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 390,
-        "y": 360,
-        "wires": []
-    },
-    {
         "id": "9a9f9873ee494c41",
         "type": "influxdb out",
         "z": "67335a4ea77805fd",
@@ -205,7 +189,7 @@
         "encoding": "none",
         "allProps": false,
         "x": 560,
-        "y": 600,
+        "y": 560,
         "wires": [
             [
                 "94d8eecd4efb2f70"
@@ -234,7 +218,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 330,
-        "y": 600,
+        "y": 560,
         "wires": [
             [
                 "7888cf5f3405f3bd"
@@ -253,7 +237,7 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1180,
+        "x": 920,
         "y": 600,
         "wires": []
     },
@@ -270,7 +254,7 @@
         "finalize": "",
         "libs": [],
         "x": 960,
-        "y": 600,
+        "y": 500,
         "wires": [
             []
         ]
@@ -284,11 +268,10 @@
         "action": "",
         "pretty": false,
         "x": 770,
-        "y": 600,
+        "y": 560,
         "wires": [
             [
                 "d6705ecab89ea793",
-                "4389aec77831501e",
                 "74cf5231744abad8"
             ]
         ]
@@ -346,7 +329,7 @@
         "type": "function",
         "z": "67335a4ea77805fd",
         "name": "format_telegram",
-        "func": "// Get thresholds from global context\nconst thresholds = global.get(\"thresholds\");\nconst alerts = [];\n\n// Check if thresholds exist\nif (!thresholds) {\n    node.error(\"Thresholds not loaded in global context!\");\n    return msg;\n}\n\nconst fields = Object.keys(thresholds);\n\n// Loop through the sensor data from InfluxDB\nmsg.payload.forEach((data) => {\n\n    fields.forEach(field => {\n\n        if (data[field]) { //Check if field exists in the data\n            \n            const { alert_low, alert_high } = thresholds[field];\n            let value = data[field];\n            let device = data[\"device\"];\n\n            // Compare value with thresholds\n            if (value < alert_low) {\n                alerts.push(`🚨 ${device} (${field}): Too Low (${value})`);\n            } else if (value > alert_high) {\n                alerts.push(`🚨 ${device} (${field}): Too High (${value})`);\n            }\n        }\n    });\n});\n\n// Send warnings if any\nif (alerts.length > 0) {\n    msg.payload = {\n        chatId: -4797952575,\n        type: \"message\",\n        content: alerts.join(\"\\n\")\n    }\n    return msg; // Pass the message to the next node\n}\n\n// If no warnings, stop the flow\nreturn null;\n\n",
+        "func": "// Get thresholds from global context\nconst thresholds = global.get(\"thresholds\");\nconst alertsByZone = {};\n\n// Check if thresholds exist\nif (!thresholds) {\n    node.error(\"Thresholds not loaded in global context!\");\n    return msg;\n}\n\nconst fields = Object.keys(thresholds);\n\n// Loop through the sensor data from InfluxDB\nmsg.payload.forEach((data) => {\n    const zone = data[\"zone\"]; // Assume \"zone\" field exists in the data\n    const device = data[\"device\"];\n\n    // Ensure zone grouping exists\n    if (!alertsByZone[zone]) {\n        alertsByZone[zone] = [];\n    }\n\n    fields.forEach(field => {\n        if (data[field]) { // Check if field exists in the data\n            \n            const { alert_low, alert_high } = thresholds[field];\n            let value = data[field];\n\n            // Compare value with thresholds\n            if (value < alert_low) {\n                alertsByZone[zone].push(`🚨 ${device} (${field}): Too Low (${value})`);\n            } else if (value > alert_high) {\n                alertsByZone[zone].push(`🚨 ${device} (${field}): Too High (${value})`);\n            }\n        }\n    });\n});\n\n// Format alerts by zone\nconst zoneMessages = [];\nObject.keys(alertsByZone).forEach(zone => {\n    if (alertsByZone[zone].length > 0) {\n        zoneMessages.push(`Zone: ${zone}\\n${alertsByZone[zone].join(\"\\n\")}`);\n    }\n});\n\n// Send warnings if any\nif (zoneMessages.length > 0) {\n    msg.payload = {\n        chatId: -4797952575,\n        type: \"message\",\n        content: zoneMessages.join(\"\\n\\n\") // Separate zones with a blank line\n    };\n    return msg; // Pass the message to the next node\n}\n\n// If no warnings, stop the flow\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -356,7 +339,10 @@
         "x": 900,
         "y": 680,
         "wires": [
-            []
+            [
+                "8e80ffec3acef3c8",
+                "5fb77ac341b56bfc"
+            ]
         ]
     },
     {
@@ -374,10 +360,10 @@
         ]
     },
     {
-        "id": "1293fd382e0fb26f",
+        "id": "8e80ffec3acef3c8",
         "type": "debug",
         "z": "67335a4ea77805fd",
-        "name": "debug 4",
+        "name": "debug 2",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -386,45 +372,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1080,
-        "y": 880,
+        "y": 780,
         "wires": []
-    },
-    {
-        "id": "d568e504d3ea4d65",
-        "type": "influxdb out",
-        "z": "67335a4ea77805fd",
-        "influxdb": "82988a6677f7bf06",
-        "name": "",
-        "measurement": "threshold",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "univaq",
-        "bucket": "waterdistribution",
-        "x": 1300,
-        "y": 520,
-        "wires": []
-    },
-    {
-        "id": "4389aec77831501e",
-        "type": "function",
-        "z": "67335a4ea77805fd",
-        "name": "write_thresholds_db",
-        "func": "const data = msg.payload; // Input JSON\nconst points = [];\n\nfor (const metric in data) {\n    const thresholds = data[metric];\n    points.push([\n        { \n            alert_low: thresholds.alert_low, \n            alert_high: thresholds.alert_high \n        },\n        { metric }        // Tag (e.g., Flow, pH)\n    ]);\n}\n\nmsg.payload = points; // Output data points for InfluxDB\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 960,
-        "y": 520,
-        "wires": [
-            [
-                "d568e504d3ea4d65"
-            ]
-        ]
     }
 ]

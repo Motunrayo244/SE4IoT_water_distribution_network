@@ -1,39 +1,93 @@
 {
   "areas": [
     {
-      "name": "L'Aquila Distribution Zone",
+      "name": "Centro Station",
       "tanks": [
         {
-          "name": "Main Tank",
-          "longitude": 13.3995,
-          "latitude": 42.3499,
+          "name": "Tank I",
+          "longitude": 13.405537,
+          "latitude": 42.359811,
           "pipelines": [
             {
               "name": "Pipeline 1",
-              "longitude": 13.4000,
-              "latitude": 42.3505
+              "longitude": 13.403897,
+              "latitude": 42.359729
             },
             {
               "name": "Pipeline 2",
-              "longitude": 13.4005,
-              "latitude": 42.3510
+              "longitude": 13.401137,
+              "latitude": 42.3635
+            },
+            {
+              "name": "Pipeline 3",
+              "longitude": 13.400065,
+              "latitude": 42.367594
             }
           ]
         }
       ]
     },
     {
-      "name": "Teramo Distribution Zone",
+      "name": "Torreta Station",
       "tanks": [
         {
-          "name": "Secondary Tank",
-          "longitude": 13.4020,
-          "latitude": 42.3520,
+          "name": "Tank II",
+          "longitude": 13.3997038,
+          "latitude": 42.3547116,
           "pipelines": [
             {
-              "name": "Pipeline 3",
-              "longitude": 13.4010,
-              "latitude": 42.3515
+              "name": "Pipeline 4",
+              "longitude": 13.391887,
+              "latitude": 42.355254
+            },
+            {
+              "name": "Pipeline 5",
+              "longitude": 13.393499,
+              "latitude": 42.355686
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Villa Comunale dell'Aquila",
+      "tanks": [
+        {
+          "name": "Tank III",
+          "longitude": 13.395426,
+          "latitude": 42.345707,
+          "pipelines": [
+            {
+              "name": "Pipeline 6",
+              "longitude": 13.395893,
+              "latitude": 42.352025
+            },
+            {
+              "name": "Pipeline 7",
+              "longitude": 13.393427,
+              "latitude": 42.337962
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Quarto San Pietro Station",
+      "tanks": [
+        {
+          "name": "Tank IV",
+          "longitude": 13.382180,
+          "latitude": 42.357970,
+          "pipelines": [
+            {
+              "name": "Pipeline 8",
+              "longitude": 13.388496,
+              "latitude": 42.361783
+            },
+            {
+              "name": "Pipeline 9",
+              "longitude": 13.385695,
+              "latitude": 42.351935
             }
           ]
         }
