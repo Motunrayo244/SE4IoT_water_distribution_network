@@ -35,15 +35,12 @@ class Pipeline:
             ph_difference = random.uniform(0.1, 0.5)
             salinity_difference = random.uniform(0, 25)
 
-        # Use tank PH and Salinity values adjusted by differences
-        data = {
+        return {
             "PH": round(tank_data["PH"] + ph_difference, 2),
             "Salinity": round(tank_data["Salinity"] + salinity_difference, 2),
-            "Flow": flow_rate
+            "Flow": flow_rate,
+            'longitude': self.longitude,
+            +'latitude': self.latitude,
+            +"timestamp": time.time(),
         }
-        data['longitude'] = self.longitude
-        data['latitude'] = self.latitude
-
-        data["timestamp"] = time.time()
-        return data
 
