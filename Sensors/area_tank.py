@@ -39,7 +39,7 @@ class Tank:
 
     def get_sensors_initial_values(self):
         """Retrieve the initial values of sensors."""
-        return {sensor: random.uniform(*self.sensors_acceptable_range[sensor]) for sensor in self.sensors_acceptable_range}
+        return {sensor: round(random.uniform(*self.sensors_acceptable_range[sensor]),2 )for sensor in self.sensors_acceptable_range}
 
     def generate_water_depth(self):
         """Simulate water depth changes based on inlet and outlet flow."""
@@ -57,32 +57,32 @@ class Tank:
         previous_water_depth = self.sensors_previous_value['Water_Depth']
         self.sensors_previous_value['Water_Depth'] = self.sensors_current_value['Water_Depth']
 
-        net_flow = inlet_flow - outlet_flow + random.uniform(-0.1, 0.1)
+        net_flow = inlet_flow - outlet_flow + round(random.uniform(-0.1, 0.1),2)
         self.sensors_current_value['Water_Depth'] += net_flow * previous_water_depth
 
         # Ensure water depth remains within valid range
-        self.sensors_current_value['Water_Depth'] = max(
+        self.sensors_current_value['Water_Depth'] = round(max(
             self.sensors_acceptable_range['Water_Depth'][0],
             min(self.sensors_current_value['Water_Depth'], self.sensors_acceptable_range['Water_Depth'][1])
-        )
+        ),2)
 
         # Adjust related parameters as water depth increases
         if net_flow > 0:  # When water depth is increasing
-            self.sensors_current_value['Turbidity'] = max(
+            self.sensors_current_value['Turbidity'] = round(max(
                 self.sensors_acceptable_range['Turbidity'][0],
-                self.sensors_current_value['Turbidity'] - (self.sensors_current_value['Water_Depth'] * 0.3)
+                self.sensors_current_value['Turbidity'] - (self.sensors_current_value['Water_Depth'] * 0.3),2)
             )
-            self.sensors_current_value['PH'] = max(
+            self.sensors_current_value['PH'] = round(max(
                 self.sensors_acceptable_range['PH'][0],
-                min(self.sensors_current_value['PH'] - (self.sensors_current_value['Water_Depth'] * 0.05), self.sensors_acceptable_range['PH'][1])
+                min(self.sensors_current_value['PH'] - (self.sensors_current_value['Water_Depth'] * 0.05), self.sensors_acceptable_range['PH'][1]),2)
             )
-            self.sensors_current_value['Salinity'] = max(
+            self.sensors_current_value['Salinity'] = round(max(
                 self.sensors_acceptable_range['Salinity'][0],
-                self.sensors_current_value['Salinity'] - (self.sensors_current_value['Water_Depth'] * 5)
+                self.sensors_current_value['Salinity'] - (self.sensors_current_value['Water_Depth'] * 5),2)
             )
-            self.sensors_current_value['ORP'] = max(
+            self.sensors_current_value['ORP'] = round(max(
                 self.sensors_acceptable_range['ORP'][0],
-                min(self.sensors_current_value['ORP'] - (self.sensors_current_value['Water_Depth'] * 2), self.sensors_acceptable_range['ORP'][1])
+                min(self.sensors_current_value['ORP'] - (self.sensors_current_value['Water_Depth'] * 2), self.sensors_acceptable_range['ORP'][1]),2)
             )
 
     def generate_sensor_value(self, sensor_name, base_effect=0, scale=1.0):
@@ -93,12 +93,12 @@ class Tank:
         random_effector = random.uniform(-1, 1) * scale
 
         # Apply the effect
-        self.sensors_current_value[sensor_name] += base_effect + random_effector
+        self.sensors_current_value[sensor_name] += round(base_effect + random_effector,2)
 
         # Clamp the sensor value within the acceptable range
-        self.sensors_current_value[sensor_name] = max(
+        self.sensors_current_value[sensor_name] = round(max(
             self.sensors_acceptable_range[sensor_name][0],
-            min(self.sensors_current_value[sensor_name], self.sensors_acceptable_range[sensor_name][1])
+            min(self.sensors_current_value[sensor_name], self.sensors_acceptable_range[sensor_name][1]),2)
         )
 
     def generate_ORP(self):
