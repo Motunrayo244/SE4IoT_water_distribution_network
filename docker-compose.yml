@@ -89,30 +89,32 @@ services:
 
   # Grafana
   grafana:
-    container_name: waterdistribution-grafana
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000" # Grafana default port
-    environment:
-      - GF_SECURITY_ADMIN_USER_FILE=/run/secrets/grafana-admin-user
-      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/admin_password
-      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clock-panel
-    volumes:
-      - ./grafana/data:/var/lib/grafana
-      - ./shared_data:/shared-data
-    networks:
-      waterdistribution-network:
-        ipv4_address: 172.30.0.103
-    depends_on:
-      - influxdb
-    secrets:
-      - grafana-admin-user
-      - grafana-admin-password
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      container_name: waterdistribution-grafana
+      image: grafana/grafana:latest
+      ports:
+        - "3000:3000" # Grafana default port
+      environment:
+        - GF_SECURITY_ADMIN_USER_FILE=/run/secrets/grafana-admin-user
+        - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana-admin-password
+        - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+        - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clock-panel
+      volumes:
+        - ./grafana/data:/var/lib/grafana
+        - ./grafana/dashboards:/var/lib/grafana/dashboards
+        - ./grafana/provisioning:/etc/grafana/provisioning
+      networks:
+        waterdistribution-network:
+          ipv4_address: 172.30.0.103
+      depends_on:
+        - influxdb
+      secrets:
+        - grafana-admin-user
+        - grafana-admin-password
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
 
 secrets:
   influxdb-admin-username:
