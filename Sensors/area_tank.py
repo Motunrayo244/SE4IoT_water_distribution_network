@@ -3,12 +3,18 @@ import time
 from enum import Enum
 
 class Tank:
-    class FlowState(Enum):
+    ''' Tank class to simulate the an overhead Tank in the WQMS. 
+     The tank has the following sensors: ORP, PH, Salinity, Water_Depth, Turbidity, Temperature.
+     This class is used to generate sensor data for the tank for all the sensors listed.
+       '''
+    class FlowState(Enum): 
+        # Define the inlet and outlet flow rates  of the tank. This helps to control the water depth in the tank. Allowing the water depth to vary and fluntuate.
         OFF = 0
         LOW = 1
         MEDIUM = 2
         HIGH = 3
 
+    #The range of allowed values for each sensor"
     tank_sensors_range = {
         'ORP': (-100, 1000),
         'PH': (0, 14),
@@ -17,7 +23,8 @@ class Tank:
         'Turbidity': (0, 50.0),
         'Temperature': (-55, 150.0)
     }
-
+    # Define the acceptable range for each sensor to maintain water quality.
+    #This range is used to control the inler flow rate.
     sensors_acceptable_range = {
         'ORP': (650, 700),
         'PH': (6, 8.5),
@@ -38,7 +45,8 @@ class Tank:
         self.impurity_present = False
 
     def get_sensors_initial_values(self):
-        """Retrieve the initial values of sensors."""
+        """Retrieve the initial values of sensors.
+        it returns random values within the acceptable range for each sensor."""
         return {sensor: round(random.uniform(*self.sensors_acceptable_range[sensor]),2 )for sensor in self.sensors_acceptable_range}
 
     def generate_water_depth(self):
@@ -74,7 +82,7 @@ class Tank:
             )
             self.sensors_current_value['PH'] = round(max(
                 self.sensors_acceptable_range['PH'][0],
-                min(self.sensors_current_value['PH'] - (self.sensors_current_value['Water_Depth'] * 0.05), self.sensors_acceptable_range['PH'][1]),2)
+                min(self.sensors_current_value['PH'] + (self.sensors_current_value['Water_Depth'] * 0.05), self.sensors_acceptable_range['PH'][1]),2)
             )
             self.sensors_current_value['Salinity'] = round(max(
                 self.sensors_acceptable_range['Salinity'][0],
