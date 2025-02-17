@@ -86,10 +86,24 @@ Grafana is used for visualizing the data stored in InfluxDB.
 🔹 Sensors
 The sensors service is responsible for generating and publishing sensor data.
 
-## 📜  License
-This project is licensed under the MIT License.
-See the LICENSE file for details.
+## Technologies Used
+- **Docker:** Manages microservice containerization.
+- **Eclipse Mosquitto:** Handles real-time MQTT messaging.
+- **InfluxDB:** Stores time-series environmental data.
+- **Grafana:** Displays real-time and historical data on dashboards.
+- **Python:** Implements monitoring, analysis, and execution services.
+- **Node Red :** Used for integrating data from different aspect of the system.
 
-## 📬 Contact
-For any questions or contributions, please reach out to the project maintainers.
+## Usage
+- **View Real-Time Data:** Use the Grafana dashboard.
+- **Configure Distribution Network:** Edit configuration files.
+- **Check Logs:** View Docker container logs.
 
+---
+
+## Authors
+- Mariama Celi S. de Oliveira
+- Motunrayo Osatohanmen Ibiyo
+
+## Professor
+- Davide Di Ruscio (Software Engineering for Autonomous Systems)
