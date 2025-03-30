@@ -1,19 +1,19 @@
 {
     "Flow": {
       "alert_low": 6.5,
-      "alert_high": 7.5
+      "alert_high": 8
     },
     "Salinity": {
       "alert_low": 0,
-      "alert_high": 40
+      "alert_high": 600
     },
     "pH": {
       "alert_low": 6,
-      "alert_high": 8.5
+      "alert_high": 7.8
     },
     "ORP": {
-      "alert_low": 500,
-      "alert_high": 900
+      "alert_low": 660,
+      "alert_high": 700
     },
     "Water_Depth": {
       "alert_low": 0.5,
@@ -21,7 +21,7 @@
     },
     "Turbidity": {
       "alert_low": 0,
-      "alert_high": 0.25
+      "alert_high": 2.5
     },
     "Temperature": {
       "alert_low": 1,

@@ -1,5 +1,14 @@
 services:
 
+  # Template Provider
+  dashboard-updater:
+    build:
+      context: .  # Set the build context to the root of the project
+      dockerfile:  dashboard_updater/Dockerfile
+    volumes:
+      - ./shared_data:/app/shared_file  # Mount shared_file to the container at /app/shared_file
+      - ./grafana/provisioning/dashboards:/app/dashboards
+  
   # Node-RED
   node-red:
     container_name: waterdistribution-node-red
@@ -107,6 +116,7 @@ services:
           ipv4_address: 172.30.0.103
       depends_on:
         - influxdb
+        - dashboard-updater
       secrets:
         - grafana-admin-user
         - grafana-admin-password
