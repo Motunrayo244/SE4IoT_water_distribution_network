@@ -23,51 +23,23 @@ Create a configuration file using the GUI or by editing the existing configurati
 
 
 ## Run the Project
-To run the project use Docker Compose:
-- Run the following command in your terminal:
-```docker-compose up --build ```
+
+1. **Setup the `.env` file**:
+   - Make a copy of the `.env.example` file and rename it to `.env` in the same directory.
+   - In this `.env` file, you can configure various environment variables needed for the project. For example, you can set up your **Telegram bot information** (like the bot token and chat ID), database configurations, API keys, etc.
+
+2. **Run the project using Docker Compose**:
+   - Open your terminal and navigate to the project directory.
+   - Execute the following command to build and start the containers:
+   ```bash
+   docker-compose up --build
+   ```
 
 ## System Achitectural Diagram
 
 
 ![Architectural Diagram](ProjectProposal/WQMS%20Architecture.jpg)
 
-## .
-├── configuration.json             
-├── docker-compose.yml               
-├── grafana/                          
-│   ├── dashboards/                   
-│   ├── data/                          
-│   └── provisioning/                  
-├── influxdb/                         
-│   ├── config/                        
-│   ├── data/                          
-├── LICENSE                            
-├── mosquitto/                         
-│   ├── config/                        
-│   ├── data/                          
-│   └── log/                           
-├── nodered-custom/                    
-│   ├── data/                          
-│   └── Dockerfile                     
-├── ProjectProposal/                   
-│   ├── ProjectDocumentation.docx      
-│   ├── ProjectProposalDescription.docx # on document
-│   ├── se4io_WSN_overview.png         
-│   └── se4iot.drawio                 
-├── README.md                         
-├── requirements.txt                   
-├── secrets/                            
-│   ├── grafana-admin-password        
-│   ├── grafana-admin-user             
-│   ├── influxdb-admin-password        
-│   └── ...                           
-├── Sensors/                            
-│   ├── __init__.py                    
-│   ├── sensors.py                     
-│   └── distribution_area.py            
-├── shared_data/                      
-└── ui_configuration_editor.html        
 
 ## 🛠️  Services
 
@@ -85,6 +57,7 @@ Grafana is used for visualizing the data stored in InfluxDB.
 
 🔹 Sensors
 The sensors service is responsible for generating and publishing sensor data.
+
 
 ## Technologies Used
 - **Docker:** Manages microservice containerization.
