@@ -99,10 +99,8 @@ services:
         - GF_SECURITY_ADMIN_USER_FILE=/run/secrets/grafana-admin-user
         - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana-admin-password
         - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-        - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clock-panel
+        - GF_USERS_ALLOW_SIGN_UP=false
       volumes:
-        - ./grafana/data:/var/lib/grafana
-        - ./grafana/dashboards:/var/lib/grafana/dashboards
         - ./grafana/provisioning:/etc/grafana/provisioning
       networks:
         waterdistribution-network:

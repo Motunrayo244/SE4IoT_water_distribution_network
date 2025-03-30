@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    url: http://waterdistribution-influxdb:8086   # Pointing to the InfluxDB service by container name
+    isDefault: true
+    version: 2
+    jsonData:
+      version: Flux
+      organization: univaq
+      bucket: waterdistribution
+    secureJsonData:
+      token: 26FmnbhXWOpmrFjZL3Hv71v7OTC0nrW3-mBezrOM8QIAXRhB1IAg3SMQIIEXFlwuW2S0fjecIi5LIlN2pNjrsg==  # InfluxDB token to access the bucket
+

@@ -37,7 +37,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "aeheki7ov6l8gb"
       },
       "fieldConfig": {
         "defaults": {
@@ -916,7 +916,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": null
               },
               {
                 "color": "green",
@@ -1018,7 +1019,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": null
               },
               {
                 "color": "green",
@@ -1120,7 +1122,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": null
               },
               {
                 "color": "green",
@@ -1222,7 +1225,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": null
               },
               {
                 "color": "green",
@@ -1324,7 +1328,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "blue",
+                "value": null
               },
               {
                 "color": "green",
@@ -1379,7 +1384,7 @@
       "type": "timeseries"
     }
   ],
-  "preload": false,
+  "preload": true,
   "refresh": "auto",
   "schemaVersion": 40,
   "tags": [],
@@ -1427,6 +1432,6 @@
   "timezone": "browser",
   "title": "WaterQuality",
   "uid": "feawihg565nggc",
-  "version": 107,
+  "version": 1,
   "weekStart": ""
 }
