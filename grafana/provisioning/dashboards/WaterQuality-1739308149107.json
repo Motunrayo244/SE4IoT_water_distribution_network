@@ -37,7 +37,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "aeheki7ov6l8gb"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -364,7 +364,8 @@
     },
     {
       "datasource": {
-        "uid": "ceasufk7sfugwf"
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -477,7 +478,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -665,7 +666,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -768,7 +769,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -871,7 +872,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -974,7 +975,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -1077,7 +1078,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -1180,7 +1181,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -1283,7 +1284,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {

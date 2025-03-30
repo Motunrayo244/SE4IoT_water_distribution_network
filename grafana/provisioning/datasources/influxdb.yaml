@@ -10,7 +10,7 @@ datasources:
     jsonData:
       version: Flux
       organization: univaq
-      bucket: waterdistribution
+      defaultBucket: waterdistribution
     secureJsonData:
-      token: 26FmnbhXWOpmrFjZL3Hv71v7OTC0nrW3-mBezrOM8QIAXRhB1IAg3SMQIIEXFlwuW2S0fjecIi5LIlN2pNjrsg==  # InfluxDB token to access the bucket
+      token: Ga8nVsXP4FAe5_M1a5j7uCa4zO_u_M9oUsO8wUSWh_wPbR3clc9ZTv420Li9adOVCPl1tGvn6hLHfI5gP7Lm5A==  # InfluxDB token to access the bucket
 
