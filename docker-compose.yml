@@ -8,9 +8,10 @@ services:
       dockerfile: Dockerfile
     image: custom_nodered:latest
     environment:
-      - TZ=Europe/Amsterdam
-      - MYSQLUSERNAME=root
-      - MYSQLPASSWORD=water1234!
+      - MYSQLUSERNAME=${MYSQLUSERNAME}
+      - MYSQLPASSWORD=${MYSQLPASSWORD}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
     ports:
       - "1880:1880"
     networks:
@@ -80,7 +81,7 @@ services:
       dockerfile: Dockerfile
     image: waterdistribution-sensors:latest
     environment:
-      - MQTT_BROKER=waterdistribution-mosquitto
+      - MQTT_BROKER=${MQTT_BROKER}
     networks:
       waterdistribution-network:
         ipv4_address: 172.30.0.102

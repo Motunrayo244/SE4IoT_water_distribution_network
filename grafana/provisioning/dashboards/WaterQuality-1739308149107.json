@@ -702,7 +702,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed+area"
             }
           },
           "mappings": [],
@@ -710,12 +710,16 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "red",
                 "value": null
               },
               {
+                "color": "green",
+                "value": 6
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 7.5
               }
             ]
           }
@@ -726,6 +730,109 @@
         "h": 8,
         "w": 12,
         "x": 0,
+        "y": 17
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "query": "from(bucket: \"waterdistribution\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop) \n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\") \n  |> filter(fn: (r) => r[\"_field\"] == \"Flow\") \n  |> group(columns: [\"device\"]) // Group by the device tag",
+          "refId": "A"
+        }
+      ],
+      "title": "Flow - All Sensors ${zone}",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".*device=\"([^\"]+)\".*",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "ceasufk7sfugwf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "dashed+area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
         "y": 17
       },
       "id": 10,
@@ -801,7 +908,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed+area"
             }
           },
           "mappings": [],
@@ -809,12 +916,15 @@
             "mode": "absolute",
             "steps": [
               {
+                "color": "red"
+              },
+              {
                 "color": "green",
-                "value": null
+                "value": 6
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 8.5
               }
             ]
           }
@@ -824,8 +934,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 17
+        "x": 0,
+        "y": 25
       },
       "id": 11,
       "options": {
@@ -900,7 +1010,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed+area"
             }
           },
           "mappings": [],
@@ -908,111 +1018,15 @@
             "mode": "absolute",
             "steps": [
               {
+                "color": "red"
+              },
+              {
                 "color": "green",
-                "value": null
+                "value": 550
               },
               {
                 "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 25
-      },
-      "id": 12,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "query": "from(bucket: \"waterdistribution\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop) \n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\") \n  |> filter(fn: (r) => r[\"_field\"] == \"Flow\") \n  |> group(columns: [\"device\"]) // Group by the device tag",
-          "refId": "A"
-        }
-      ],
-      "title": "Flow - All Sensors ${zone}",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": ".*device=\"([^\"]+)\".*",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
+                "value": 800
               }
             ]
           }
@@ -1025,7 +1039,7 @@
         "x": 12,
         "y": 25
       },
-      "id": 13,
+      "id": 16,
       "options": {
         "legend": {
           "calcs": [],
@@ -1042,11 +1056,11 @@
       "pluginVersion": "11.5.1",
       "targets": [
         {
-          "query": "from(bucket: \"waterdistribution\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop) \n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\") \n  |> filter(fn: (r) => r[\"_field\"] == \"Temperature\") \n  |> group(columns: [\"device\"]) // Group by the device tag",
+          "query": "from(bucket: \"waterdistribution\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop) \n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\") \n  |> filter(fn: (r) => r[\"_field\"] == \"ORP\") \n  |> group(columns: [\"device\"]) // Group by the device tag",
           "refId": "A"
         }
       ],
-      "title": "Temperature - All Sensors ${zone}",
+      "title": "ORP - All Sensor ${zone}",
       "transformations": [
         {
           "id": "renameByRegex",
@@ -1098,7 +1112,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed+area"
             }
           },
           "mappings": [],
@@ -1106,12 +1120,15 @@
             "mode": "absolute",
             "steps": [
               {
+                "color": "red"
+              },
+              {
                 "color": "green",
-                "value": null
+                "value": 0.5
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 2
               }
             ]
           }
@@ -1122,105 +1139,6 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 33
-      },
-      "id": 14,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "query": "from(bucket: \"waterdistribution\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop) \n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\") \n  |> filter(fn: (r) => r[\"_field\"] == \"Turbidity\") \n  |> group(columns: [\"device\"]) // Group by the device tag",
-          "refId": "A"
-        }
-      ],
-      "title": "Turbidity - All Sensors ${zone}",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": ".*device=\"([^\"]+)\".*",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "ceasufk7sfugwf"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
         "y": 33
       },
       "id": 15,
@@ -1296,7 +1214,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed+area"
             }
           },
           "mappings": [],
@@ -1304,12 +1222,15 @@
             "mode": "absolute",
             "steps": [
               {
+                "color": "red"
+              },
+              {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 0.25
               }
             ]
           }
@@ -1319,10 +1240,10 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 6,
-        "y": 41
+        "x": 12,
+        "y": 33
       },
-      "id": 16,
+      "id": 14,
       "options": {
         "legend": {
           "calcs": [],
@@ -1339,11 +1260,113 @@
       "pluginVersion": "11.5.1",
       "targets": [
         {
-          "query": "from(bucket: \"waterdistribution\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop) \n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\") \n  |> filter(fn: (r) => r[\"_field\"] == \"ORP\") \n  |> group(columns: [\"device\"]) // Group by the device tag",
+          "query": "from(bucket: \"waterdistribution\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop) \n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\") \n  |> filter(fn: (r) => r[\"_field\"] == \"Turbidity\") \n  |> group(columns: [\"device\"]) // Group by the device tag",
           "refId": "A"
         }
       ],
-      "title": "ORP - All Sensor ${zone}",
+      "title": "Turbidity - All Sensors ${zone}",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ".*device=\"([^\"]+)\".*",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "ceasufk7sfugwf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "dashed+area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 25
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 6,
+        "y": 41
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "query": "from(bucket: \"waterdistribution\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop) \n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\") \n  |> filter(fn: (r) => r[\"_field\"] == \"Temperature\") \n  |> group(columns: [\"device\"]) // Group by the device tag",
+          "refId": "A"
+        }
+      ],
+      "title": "Temperature - All Sensors ${zone}",
       "transformations": [
         {
           "id": "renameByRegex",
@@ -1357,14 +1380,15 @@
     }
   ],
   "preload": false,
+  "refresh": "auto",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "text": "Torreta Station",
-          "value": "Torreta Station"
+          "text": "Quarto San Pietro Station",
+          "value": "Quarto San Pietro Station"
         },
         "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(\n  bucket: \"waterdistribution\",\n  tag: \"zone\"\n)\n",
         "label": "Zone",
@@ -1379,8 +1403,8 @@
       },
       {
         "current": {
-          "text": "Pipeline 4",
-          "value": "Pipeline 4"
+          "text": "Pipeline 8",
+          "value": "Pipeline 8"
         },
         "definition": "from(bucket: \"waterdistribution\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r[\"zone\"] == \"${zone}\")\n  |> keep(columns: [\"device\"])\n  |> distinct(column: \"device\")\n",
         "label": "Device",
@@ -1396,13 +1420,13 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "WaterQuality",
   "uid": "feawihg565nggc",
-  "version": 92,
+  "version": 107,
   "weekStart": ""
 }
